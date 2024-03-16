@@ -1,0 +1,43 @@
+import discord
+from discord import app_commands
+from discord.ext import commands
+import json
+from discord.ext.commands.cog import Cog
+from discord.ext.commands.core import command
+from core.protect import Protect
+
+from core.cogs import Cog_Extention
+
+with open('setting.json',mode= "r",encoding='utf8') as jfile:  
+    jdata = json.load(jfile)  
+
+num = 0
+
+class main(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+    
+    @app_commands.command(name = "clhs",description="send clhs url")                                  
+    async def clhs(self,interaction:discord.Interaction):
+        await interaction.response.send_message('https://www.clhs.tyc.edu.tw/home')
+
+    @app_commands.command(name = "hello",description="say hello to u")
+    async def hello(self,interaction:discord.Interaction):
+        await interaction.response.send_message('no way')
+    
+    @app_commands.command(name="say",description="say something")
+    async def say(self, interaction: discord.Interaction, msg: str):   
+        try:
+            global num
+            num += 1
+            message = Protect.message(msg)
+            await interaction.response.send_message("✅ 已匿名留言。", ephemeral = True)
+            await interaction.channel.send(f"```自重啟第 {num} 則匿名⬇```") 
+            await interaction.channel.send(message)
+            
+        except Exception as err:
+                print(err)         
+
+
+async def setup(bot: commands.Bot):
+    await bot.add_cog(main(bot))
