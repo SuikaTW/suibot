@@ -23,7 +23,7 @@ class main(commands.Cog):
 
     @app_commands.command(name = "hello",description="say hello to u")
     async def hello(self,interaction:discord.Interaction):
-        await interaction.response.send_message('no way')
+        await interaction.response.send_message('Hello!!')
     
     @app_commands.command(name="say",description="say something")
     async def say(self, interaction: discord.Interaction, msg: str):   

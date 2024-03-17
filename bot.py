@@ -8,6 +8,9 @@ import os
 with open('setting.json',mode= "r",encoding='utf8') as jfile:  
     jdata = json.load(jfile) 
 
+with open('token.json',mode= "r",encoding='utf8') as jfile:  
+    jdata = json.load(jfile) 
+
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix = "=", intents = intents)
 

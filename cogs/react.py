@@ -16,10 +16,9 @@ class react(commands.Cog):
         self.bot = bot
     
     @app_commands.command(name="picture",description="send a pic")                                  
-    async def picture(self,interation):
-        try:
-            pic = discord.File(jdata["pic"])           
-            await interation.response.send_message(file = pic)  
+    async def picture(self,interaction):
+        try:        
+            await interaction.response.send_message(jdata['pic'])  
         except Exception as err:
             print(err)
     

@@ -16,11 +16,9 @@ class button(commands.Cog):
     @commands.Cog.listener()
     async def on_interaction(self, interaction: discord.Interaction):
         if interaction.data["custom_id"] == "csleep":
-            csleep = discord.File(jdata['csleep'])
-            await interaction.response.send_message(file=csleep)
+            await interaction.response.send_message(jdata['pic'])
         if interaction.data["custom_id"] == "jodieride":
-            jodieride = discord.File(jdata['jodieride'])
-            await interaction.response.send_message(file=jodieride)     
+            await interaction.response.send_message(jdata['jodieride'])     
             
     @app_commands.command(name = "cpic",description="call some picture")
     async def view(self,interaction:discord.Interaction):
