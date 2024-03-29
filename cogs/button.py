@@ -18,7 +18,7 @@ class button(commands.Cog):
         if interaction.data["custom_id"] == "csleep":
             await interaction.response.send_message(jdata['pic'])
         if interaction.data["custom_id"] == "jodieride":
-            await interaction.response.send_message(jdata['jodieride'])     
+            await interaction.response.send_message(jdata['bro'])     
             
     @app_commands.command(name = "cpic",description="call some picture")
     async def view(self,interaction:discord.Interaction):
@@ -31,7 +31,7 @@ class button(commands.Cog):
             
             button_view2 = discord.ui.Button(
                 custom_id="jodieride",
-                label='jodie',
+                label='bro',
                 style= discord.ButtonStyle.blurple)
             
             view.add_item(button_view)

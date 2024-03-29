@@ -27,17 +27,12 @@ class main(commands.Cog):
     
     @app_commands.command(name="say",description="say something")
     async def say(self, interaction: discord.Interaction, msg: str):   
-        try:
             global num
             num += 1
             message = Protect.message(msg)
             await interaction.response.send_message("✅ 已匿名留言。", ephemeral = True)
             await interaction.channel.send(f"```自重啟第 {num} 則匿名⬇```") 
             await interaction.channel.send(message)
-            
-        except Exception as err:
-                print(err)         
-
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(main(bot))
