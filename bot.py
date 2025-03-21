@@ -4,6 +4,9 @@ from discord.ext import commands
 import json
 import asyncio
 import os
+import logging
+
+logging.basicConfig(level=logging.INFO)  # 設定日誌層級
 
 with open('setting.json',mode= "r",encoding='utf8') as jfile:  
     jdata = json.load(jfile) 
@@ -24,6 +27,8 @@ async def on_ready():
     await bot.change_presence(status= status_w, activity=activity_w)
     print("ready")
 
+
+
 # 載入指令程式檔案
 @bot.command()
 async def load(ctx, extension):
@@ -42,6 +47,15 @@ async def reload(ctx, extension):
     await bot.reload_extension(f"cogs.{extension}")
     await ctx.send(f"Reloaded {extension}")
 
+@bot.command()
+async def cogs(ctx):
+    await ctx.send(f"已載入的 Cogs: {list(bot.cogs.keys())}")
+
+@bot.command()
+async def sync(ctx):
+    await bot.tree.sync()
+    await ctx.send("✅ 指令已同步！")
+    
 # 載入全部程式檔案
 async def load_extensions():
     for filename in os.listdir("./cogs"):

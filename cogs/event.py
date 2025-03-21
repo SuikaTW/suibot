@@ -29,7 +29,7 @@ class event(commands.Cog):
         if message.content == '陳盡心':
             await message.channel.send("噁心")
                     
-        if find_token(message):
+        if find_token(message.content):
             await message.delete()
             await message.channel.send("你不能輸入 Token！")
     
