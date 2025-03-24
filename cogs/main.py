@@ -17,15 +17,15 @@ class main(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
-    @app_commands.command(name = "clhs",description="send clhs url")                                  
+    @app_commands.command(name = "clhs",description="傳送中壢高中官網")                                  
     async def clhs(self,interaction:discord.Interaction):
         await interaction.response.send_message('https://www.clhs.tyc.edu.tw/home')
 
-    @app_commands.command(name = "hello",description="say hello to u")
+    @app_commands.command(name = "hello",description="跟你說哈囉")
     async def hello(self,interaction:discord.Interaction):
         await interaction.response.send_message('Hello!!')
     
-    @app_commands.command(name="say",description="say something")
+    @app_commands.command(name="say",description="匿名留言")
     async def say(self, interaction: discord.Interaction, msg: str):   
             global num
             num += 1

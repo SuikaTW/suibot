@@ -15,7 +15,7 @@ class react(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
-    @app_commands.command(name="picture",description="send a pic")                                  
+    @app_commands.command(name="picture",description="傳送照片")                                  
     async def picture(self,interaction):    
             await interaction.response.send_message(jdata['pic'])  
     
