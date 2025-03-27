@@ -24,14 +24,11 @@ class main(commands.Cog):
     @app_commands.command(name = "hello",description="跟你說哈囉")
     async def hello(self,interaction:discord.Interaction):
         await interaction.response.send_message('Hello!!')
+        await interaction.channel.send('<:SPOILER_unknown:1353774295863529523>')
     
     @app_commands.command(name="say",description="匿名留言")
     async def say(self, interaction: discord.Interaction, msg: str):   
-            global num
-            num += 1
             message = Protect.message(msg)
-            await interaction.response.send_message("✅ 已匿名留言。", ephemeral = True)
-            await interaction.channel.send(f"```自重啟第 {num} 則匿名⬇```") 
             await interaction.channel.send(message)
 
 async def setup(bot: commands.Bot):

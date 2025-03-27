@@ -44,25 +44,71 @@ class music(commands.Cog):
         await voice.disconnect()
         await interaction.response.send_message("✅ 已離開語音頻道。")
 
-    @app_commands.command(name="music", description="播放音樂")
-    async def music(self, interaction: discord.Interaction, url: str):
-        await interaction.response.send_message("✅ 已加入播放清單。", ephemeral=True)
-        await interaction.channel.send(f"```已加入播放清單⬇```")
-        await interaction.channel.send(url)
-        await self.play(interaction, url)
-
-    async def play(self, interaction: discord.Interaction, url: str = ""):
+    @app_commands.command(name="play", description="播放音樂（支持 URL 或關鍵字搜尋）")
+    async def play(self, interaction: discord.Interaction, *, query: str):
+        """播放音樂，支持 URL 或關鍵字搜尋"""
+        await interaction.response.defer()  # 延遲回應，避免超時
         guild_id = interaction.guild.id
         playing_list = self.get_playing_list(guild_id)
 
-        # 取得目前機器人狀態
-        voice = discord.utils.get(self.bot.voice_clients, guild=interaction.guild)
+        # 檢查是否是 URL
+        if query.startswith("http://") or query.startswith("https://"):
+            url = query
+            print(f"🔗 輸入的是 URL：{url}")  # 除錯訊息
+        else:
+            print(f"🔍 正在搜尋關鍵字：{query}")  # 除錯訊息
+            url = self.search_youtube(query)
+            if not url:
+                await interaction.channel.send("❌ 無法找到相關音樂，請嘗試其他關鍵字！")
+                return
+            print(f"✅ 搜尋到的 URL：{url}")  # 除錯訊息
 
-        # 如果機器人正在播放音樂, 將音樂放入播放清單
+        # 如果機器人正在播放音樂，將音樂加入播放清單
+        voice = discord.utils.get(self.bot.voice_clients, guild=interaction.guild)
         if voice and voice.is_playing():
             playing_list.append(url)
-            await interaction.channel.send("🎵 已將歌曲加入播放清單。")
+            await interaction.channel.send(f"🎵 已將歌曲加入播放清單：{url}")
             return
+
+        # 播放音樂
+        await self.start_playing(interaction, url)
+
+    def search_youtube(self, query: str) -> str:
+        """使用 yt-dlp 搜尋 YouTube 並返回第一個結果的完整 URL"""
+        ydl_opts = {
+            "format": "bestaudio/best",
+            "quiet": False,  # 設為 False 以顯示更多日誌
+            "noplaylist": True,
+            "default_search": "ytsearch",  # 使用 YouTube 搜尋
+            "extract_flat": True,  # 只提取搜尋結果的 URL
+        }
+        search_query = f"ytsearch:{query}"
+
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            try:
+                # 使用 yt-dlp 搜尋關鍵字
+                print(f"🔍 正在搜尋關鍵字：{query}")  # 除錯訊息
+                info= ydl.extract_info(search_query, download=False)
+                print(f"🔍 搜尋結果資訊：{info}")  # 打印完整的搜尋結果
+                if "entries" in info and len(info["entries"]) > 0:
+                    first_result = info["entries"][0]
+                    print(f"✅ 搜尋成功，第一個結果：{first_result}")  # 除錯訊息
+
+                    # 檢查並補全 URL
+                    url = first_result.get("url")
+                    if not url.startswith("http"):
+                        url = f"https://www.youtube.com{url}"  # 補全為完整的 YouTube URL
+                    return url
+                else:
+                    print("❌ 未找到任何搜尋結果")
+            except Exception as e:
+                print(f"❌ 搜尋失敗：{e}")
+        return None
+
+    async def start_playing(self, interaction: discord.Interaction, url: str):
+        """開始播放音樂"""
+        guild_id = interaction.guild.id
+        voice = discord.utils.get(self.bot.voice_clients, guild=interaction.guild)
 
         # 刪除舊的音樂檔案
         if os.path.isfile(f"song_{guild_id}.mp4"):
@@ -73,14 +119,15 @@ class music(commands.Cog):
             await interaction.channel.send("🎵 正在下載音樂，請稍候...")
             self.download_audio(url, guild_id)
         except Exception as e:
-            await interaction.channel.send(f"❌ 無法下載音樂: {e}")
+            await interaction.channel.send(f"❌ 無法下載音樂：{e}")
             return
 
-        # 播放音樂並設定播放結束後的行為
+        # 播放音樂
         if not voice:
             channel = interaction.user.voice.channel
             voice = await channel.connect()
 
+        print(f"🔗 最終播放的 URL：{url}")  # 在播放前打印最終的 URL
         try:
             voice.play(
                 discord.PCMVolumeTransformer(
@@ -94,7 +141,7 @@ class music(commands.Cog):
             )
             await interaction.channel.send("🎶 正在播放音樂。")
         except Exception as e:
-            await interaction.channel.send(f"❌ 播放音樂時發生錯誤: {e}")
+            await interaction.channel.send(f"❌ 播放音樂時發生錯誤：{e}")
 
     def download_audio(self, url, guild_id):
         """下載音樂"""
@@ -132,7 +179,7 @@ class music(commands.Cog):
                     after=lambda e: self.end_song(f"song_{guild_id}.mp4", guild)
                 )
             except Exception as e:
-                print(f"❌ 播放下一首音樂時發生錯誤: {e}")
+                print(f"❌ 播放下一首音樂時發生錯誤：{e}")
 
     @app_commands.command(name="playlist", description="顯示目前的播放清單")
     async def playlist(self, interaction: discord.Interaction):
@@ -253,7 +300,6 @@ class PlaylistView(View):
 
         voice.source.volume = max(voice.source.volume - 0.1, 0.0)
         await interaction.response.send_message(f"🔉 音量已減少到 {voice.source.volume:.1f}！")
-
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(music(bot))
