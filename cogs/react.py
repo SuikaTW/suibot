@@ -6,8 +6,9 @@ from discord.ext.commands.cog import Cog
 from discord.ext.commands.core import command
 
 from core.cogs import Cog_Extention
+from bot import SETTINGS_FILE
 
-with open('setting.json',mode= "r",encoding='utf8') as jfile:  
+with open(SETTINGS_FILE,mode= "r",encoding='utf8') as jfile:  
     jdata = json.load(jfile)  
 
 
@@ -15,7 +16,7 @@ class react(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
-    @app_commands.command(name="picture",description="send a pic")                                  
+    @app_commands.command(name="picture",description="傳送照片")                                  
     async def picture(self,interaction):    
             await interaction.response.send_message(jdata['pic'])  
     
