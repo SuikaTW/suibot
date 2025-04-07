@@ -1,0 +1,40 @@
+if interaction.data["custom_id"] == "reset":
+            embed=discord.Embed(title="訂單", color=0xfbff29)
+            await interaction.response.send_message("您的訂單有") 
+            await interaction.channel.send("-----------------------")
+            if count1 != 0:
+                await interaction.channel.send(f"百香QQ綠 {count1} 份") 
+                embed.add_field(name="百香QQ綠", value=f"{count1}份", inline=False)
+                print ("百香QQ綠 共",count1,"份")
+            if count2 != 0:
+                await interaction.channel.send(f"Oreo奶茶 {count2} 份") 
+                print ("Oreo奶茶 共",count2,"份")
+            if count3 != 0:
+                await interaction.channel.send(f"多多綠茶 {count3} 份") 
+                print ("多多綠茶 共",count3,"份")
+            if count4 != 0:
+                await interaction.channel.send(f"珍珠奶茶 {count4} 份") 
+                print ("珍珠奶茶 共",count4,"份")
+            if count5 != 0:
+                await interaction.channel.send(f"珍珠鮮奶茶 {count5} 份") 
+                print ("珍珠鮮奶茶 共",count5,"份")
+            if count6 != 0:
+                await interaction.channel.send(f"椰果奶綠 {count6} 份") 
+                print ("椰果奶綠 共",count6,"份")
+
+            count1 = 0
+            count2 = 0
+            count3 = 0
+            count4 = 0
+            count5 = 0
+            count6 = 0
+            global num 
+            num += 1
+            await interaction.channel.send(f"已送出訂單，編號為{num}")
+            await interaction.channel.send("-----------------------")
+            print("訂單編號為",num)
+            print("-------------------") 
+            
+            
+            embed.set_footer(text=f"訂單編號:{num}")
+            await interaction.channel.send(embed=embed)
